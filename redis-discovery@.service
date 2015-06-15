@@ -1,0 +1,11 @@
+[Unit]
+Description=Announce Redis@%i service
+BindsTo=redis@%i.service
+
+[Service]
+EnvironmentFile=/etc/environment
+ExecStart=/bin/sh -c "while true; do etcdctl set /announce/services/redis%i ${COREOS_PUBLIC_IPV4} --ttl 60; sleep 45; done"
+ExecStop=/usr/bin/etcdctl rm /announce/services/redis%i
+
+[X-Fleet]
+X-ConditionMachineOf=redis@%i.service
